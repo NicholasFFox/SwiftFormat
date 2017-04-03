@@ -44,6 +44,7 @@ class FormatEntireFileCommand: NSObject, XCSourceEditorCommand {
         let tokens = tokenize(sourceToFormat)
 
         // Infer format options
+        // FIXME: Add hook to check for .swiftformat file here
         var options = inferOptions(from: tokens)
         options.indent = indentationString(for: invocation.buffer)
 

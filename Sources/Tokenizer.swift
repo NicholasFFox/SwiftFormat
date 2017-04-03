@@ -65,6 +65,11 @@ public extension String {
             return isSwiftKeyword
         }
     }
+  
+    func isShellComment() -> Bool {
+        guard let firstCharacter = self.characters.first else { return false }
+        return firstCharacter == "#"
+    }
 }
 
 /// Classes of token used for matching
