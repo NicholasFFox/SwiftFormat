@@ -142,29 +142,29 @@ func processArguments(_ args: [String]) {
     do {
         // Get options
         let args = try preprocessArguments(args, commandLineArguments)
-        var formatOptions: FormatOptions
-        if let file = args["config"] {
-            formatOptions = try formatOptionsFromFile(file)
-        } else {
-            formatOptions = try formatOptionsFor(args)
-        }
-        let fileOptions = try fileOptionsFor(args)
-      
-        // TODO: Test here.
-        print("FOX_DEBUG: Allman - \(formatOptions.allmanBraces)")
-        print("FOX_DEBUG: decimal grouping - \(formatOptions.decimalGrouping)")
 
         // Show help if requested specifically or if no arguments are passed
         if args["help"] != nil {
-            printHelp()
-            return
+          printHelp()
+          return
         }
 
         // Version
         if args["version"] != nil {
-            print("swiftformat, version \(version)")
-            return
+          print("swiftformat, version \(version)")
+          return
         }
+
+        // Get format options
+        var formatOptions: FormatOptions
+        if let file = args["config"]  {
+            formatOptions = try formatOptionsFromFile(file)
+        } else {
+            formatOptions = try formatOptionsFor(args)
+        }
+
+        // Get file options
+        let fileOptions = try fileOptionsFor(args)
 
         // Rules
         var rules = Set(FormatRules.byName.keys)
@@ -240,10 +240,6 @@ func processArguments(_ args: [String]) {
             if inputURLs.isEmpty, args["output"] ?? "" != "" {
                 throw FormatError.options("--verbose option has no effect unless an output file is specified")
             }
-        }
-
-        if let arg = args["config"] {
-            print("FOX_DEBUG - config path \(arg)")
         }
 
         // Infer options
@@ -560,7 +556,6 @@ func processInput(_ inputURLs: [URL],
             do {
                 if verbose {
                     print("formatting \(inputURL.path)")
-                    print("FOX_DEBUG: output \(outputURL.path)")
                 }
                 let output: String
                 if cache?[cacheKey] == cachePrefix + String(input.characters.count) {
