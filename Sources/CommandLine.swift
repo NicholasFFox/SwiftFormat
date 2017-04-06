@@ -145,19 +145,21 @@ func processArguments(_ args: [String]) {
 
         // Show help if requested specifically or if no arguments are passed
         if args["help"] != nil {
-          printHelp()
-          return
+            printHelp()
+            return
         }
 
         // Version
         if args["version"] != nil {
-          print("swiftformat, version \(version)")
-          return
+            print("swiftformat, version \(version)")
+            return
         }
+
+        _ = args.map({ print("\($0) - \($1)") })
 
         // Get format options
         var formatOptions: FormatOptions
-        if let file = args["config"]  {
+        if let file = args["config"] {
             formatOptions = try formatOptionsFromFile(file)
         } else {
             formatOptions = try formatOptionsFor(args)
@@ -798,20 +800,20 @@ func formatOptionsFromFile(_ configPath: String) throws -> FormatOptions {
 
     let configFileUrl = URL(fileURLWithPath: configPath)
     guard let configFileContents = try? String(contentsOf: configFileUrl) else {
-      throw FormatError.reading("failed to read configuration file \(configFileUrl.path)")
+        throw FormatError.reading("failed to read configuration file \(configFileUrl.path)")
     }
-  
+
     let configLines = configFileContents.components(separatedBy: .newlines)
     var args: [String: String] = [:]
     _ = configLines
-      .filter({ !$0.isEmpty && !$0.isShellComment() })
-      .map({ (line) in
-        let components = line.components(separatedBy: ":")
-        guard components.count == 2 else { return }
-        let key = components[0].trimmingCharacters(in: .whitespacesAndNewlines)
-        let value = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
-        args.updateValue(value, forKey: key)
-      })
+        .filter({ !$0.isEmpty && !$0.isShellComment() })
+        .map({ line in
+            let components = line.components(separatedBy: ":")
+            guard components.count == 2 else { return }
+            let key = components[0].trimmingCharacters(in: .whitespacesAndNewlines)
+            let value = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
+            args.updateValue(value, forKey: key)
+        })
 
     do {
         return try formatOptionsFor(args)
